@@ -1,0 +1,18 @@
+site_name: ADD-ML Services Document
+theme:
+  name: material
+  features:
+    - toc.integrate
+    - navigation.top
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to light mode
+
+copyright:
+  Copyright &copy; 2024 Delta Cognition – <a href="deltacognition.com">Delta Cognition</a>
