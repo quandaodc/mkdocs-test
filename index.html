@@ -68,7 +68,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#welcome-to-mkdocs" class="md-skip">
+        <a href="#generative-service" class="md-skip">
           Skip to content
         </a>
       
@@ -104,7 +104,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Welcome to MkDocs
+              Generative Service
             
           </span>
         </div>
@@ -238,7 +238,7 @@
           
   
   <span class="md-ellipsis">
-    Welcome to MkDocs
+    Generative Service
   </span>
   
 
@@ -249,7 +249,7 @@
         
   
   <span class="md-ellipsis">
-    Welcome to MkDocs
+    Generative Service
   </span>
   
 
@@ -271,18 +271,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#commands" class="md-nav__link">
+  <a href="#automatically-generate-table-description" class="md-nav__link">
     <span class="md-ellipsis">
-      Commands
+      Automatically generate table description
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#project-layout" class="md-nav__link">
+  <a href="#automatically-suggest-the-column-names-of-the-data" class="md-nav__link">
     <span class="md-ellipsis">
-      Project layout
+      Automatically suggest the column names of the data
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#define-the-relationship-between-a-pair-of-column" class="md-nav__link">
+    <span class="md-ellipsis">
+      Define the relationship between a pair of column
     </span>
   </a>
   
@@ -311,20 +320,50 @@
                   
 
 
-<h1 id="welcome-to-mkdocs">Welcome to MkDocs</h1>
-<p>For full documentation visit <a href="https://www.mkdocs.org">mkdocs.org</a>.</p>
-<h2 id="commands">Commands</h2>
+<h1 id="generative-service">Generative Service</h1>
+<p>There are 3 tasks in this service, the note of each task is presented as follow:</p>
+<h2 id="automatically-generate-table-description">Automatically generate table description</h2>
+<p>In the <strong>auto_description</strong> task, aside from the dataset name, this task also require the dataset sample called <em>row_data</em>. The type of the row_data is string instead of a DataFrame, there are two reasons for this:</p>
 <ul>
-<li><code>mkdocs new [dir-name]</code> - Create a new project.</li>
-<li><code>mkdocs serve</code> - Start the live-reloading docs server.</li>
-<li><code>mkdocs build</code> - Build the documentation site.</li>
-<li><code>mkdocs -h</code> - Print help message and exit.</li>
+<li>This task is in the adding data feature on the app side. It means that the provided data has not been saved in our database. Hence, it is hard for ML components to load it if we use DataFrame as an input.</li>
+<li>A string can be used directly in this task's pipeline. Hence, there is no further preprocess needed.</li>
 </ul>
-<h2 id="project-layout">Project layout</h2>
-<pre><code>mkdocs.yml    # The configuration file.
-docs/
-    index.md  # The documentation homepage.
-    ...       # Other markdown pages, images and other files.
+<p>The row_data is defined by the dataset transformation. Transform the data frame into a string defined by:</p>
+<ul>
+<li>row_i (i = 1,2,…,5): the order of row</li>
+<li>|: separating values in 1 row</li>
+<li>[SEP]: separating each row</li>
+</ul>
+<p>Example: the row_data of a dataset with 10 columns is:</p>
+<pre><code>row_1: |1xLMexpeeTKQ20SwGMaGSK|Wild Child|48|['austin americana', 'austindie', 'folk-pop', 'indie folk', 'stomp and holler']|156767|austin americana|austindie|folk-pop|indie folk|stomp and holler|
+[SEP]row_2: |3dkbV4qihUeMsqN4vBGg93|Al Green|63|['classic soul', 'funk', 'memphis soul', 'soul', 'soul blues', 'southern soul']|1897910|classic soul|funk|memphis soul|soul|soul blues|
+[SEP]row_3: |6K4qT7qjaR6q5SqwQ1oA3o|Yami Bolo|33|['deep ragga', 'lovers rock', 'modern reggae', 'reggae', 'roots reggae']|22221|deep ragga|lovers rock|modern reggae|reggae|roots reggae|
+[SEP]row_4: |2D9Oe8R9UhbMvFAsMJpXj0|Kölsch|51|['danish electronic', 'danish techno', 'deep euro house', 'melodic techno', 'minimal techno']|226006|danish electronic|danish techno|deep euro house|melodic techno|minimal techno|
+[SEP]row_5: |1Ih0fEQQsy9EeAJbYEeQRa|Avantasia|52|['fantasy metal', 'german metal', 'german power metal', 'gothic symphonic metal', 'metal', 'opera metal', 'power metal', 'speed metal', 'symphonic metal']|434195|fantasy metal|german metal|german power metal|gothic symphonic metal|metal|[SEP]
+</code></pre>
+<h2 id="automatically-suggest-the-column-names-of-the-data">Automatically suggest the column names of the data</h2>
+<p>In this task, there is one point that we need to note, the column_data. It is a dictionary/JSON which is transformed from the original dataset</p>
+<p>Example: the column_data of the dataset having 8 columns</p>
+<pre><code>{'column_1': ['1993-06-02', '2000-09-03', '1993-05-16', '2003-03-29', '1984-10-17'],
+'column_2': ['Norway', 'Hungary', 'Kuwait', 'France', 'Netherlands'],
+'column_3': ['England', 'Italy', 'Macau', 'Malta', 'Hungary'],
+'column_4': ['Norway', 'Italy', 'Kuwait', 'France', 'Netherlands'],
+'column_5': ['Lars Bohinen', 'Filippo Inzaghi', 'Ali Marwi', 'Thierry Henry', 'Wim Kieft'],
+'column_6': [48.0, 35.0, 11.0, 38.0, 19.0],
+'column_7': [False, False, False, False, False],
+'column_8': [False, False, False, False, False]}
+</code></pre>
+<h2 id="define-the-relationship-between-a-pair-of-column">Define the relationship between a pair of column</h2>
+<p>In this task, there is also one point that we need to note, the sample_data. It is a dictionary/JSON which is transformed from the original dataset. Note the the keys now are the actual name of columns</p>
+<p>Example: the column_data of the dataset having 8 columns</p>
+<pre><code>{'date': ['1993-06-02', '2000-09-03', '1993-05-16', '2003-03-29', '1984-10-17'],
+'home_team': ['Denmark', 'Argentina', 'Spain', 'Poland', 'Mexico'],
+'away_team': ['Greece', 'Bulgaria', 'Bulgaria', 'Moldova', 'Panama'],
+'team': ['Denmark', 'Argentina', 'Spain', 'Poland', 'Panama'],
+'scorer': ['Lars Bohinen', 'Filippo Inzaghi', 'Ali Marwi', 'Thierry Henry', 'Wim Kieft'],
+'minute': [55.0, 4.0, 90.0, 81.0, 48.0],
+'own_goal': [False, False, False, False, False],
+'penalty': [False, False, False, False, False]}
 </code></pre>
 
 
